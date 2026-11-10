@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.ramirkoz/project-consulting",
+  "title": "Project Consulting: Index",
+  "description": "Search dated MCP metadata and get AI billing export guides; no file audit in v0.1.",
+  "websiteUrl": "https://pc.zp.ua/developers/",
+  "repository": {
+    "url": "https://github.com/ramirkoz/project-consulting-mcp",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@ramirkoz/project-consulting-mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

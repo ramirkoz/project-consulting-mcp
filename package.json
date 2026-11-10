@@ -1,0 +1,46 @@
+{
+  "name": "@ramirkoz/project-consulting-mcp",
+  "version": "0.1.0",
+  "description": "Read-only Project Consulting Index search and AI billing export guides",
+  "type": "module",
+  "bin": {
+    "project-consulting-mcp": "src/index.mjs"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "README.uk.md",
+    "server.json",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check src/index.mjs && node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "mcpName": "io.github.ramirkoz/project-consulting",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ramirkoz/project-consulting-mcp.git"
+  },
+  "homepage": "https://pc.zp.ua/developers/",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "zod": "^4.2.0"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "agent-discovery",
+    "index",
+    "openai",
+    "openrouter"
+  ],
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.4.0"
+  }
+}
