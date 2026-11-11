@@ -52,3 +52,10 @@ The Free Audit browser application is available at https://pc.zp.ua/coster/. An 
 This is the standalone public source repository for Index MCP v0.1.0, licensed under **MIT**. The package is already published on [npm](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp), and the [official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.ramirkoz%2Fproject-consulting/versions/0.1.0) lists it. For local development on Node.js 20+, run `npm ci` and `npm test`; the committed lockfile pins dependencies. The previously published npm and Registry v0.1.0 metadata may still refer to the original private development repository; this public mirror does **not** retroactively modify either published artifact.
 
 No local billing-file audit tool is included in Phase A. Such a capability would require a separate future release with its own offline-only constraints.
+
+## Open ranking benchmark and live MCP demo
+
+- [Index ranking v1 vs v3: 54-case public benchmark](benchmarks/index-ranking/README.md), with [judged queries](benchmarks/index-ranking/gold.json), [reproducible runner](benchmarks/index-ranking/reproduce.mjs), and exact ranking source. Historical scores were supplied by Claude; snapshots are not included, and purpose-query retrieval is still weak.
+- [Run a real `npx` → stdio MCP search demo](examples/npx-live-demo.mjs). The demo checks that `github` ranks the vendor-owned MCP metadata first, without running third-party tools.
+
+These are *read-only developer artifacts*, not additional npm tools or a new package version. The baseline `0.1.0` remains unchanged.
