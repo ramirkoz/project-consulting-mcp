@@ -1,4 +1,5 @@
 // Read-only Index API helpers. No credentials, tracking, dynamic hosts, or raw billing files.
+import {indexSearchOutputSchema,indexCapabilitiesOutputSchema} from './output-schemas.mjs';
 const ORIGIN='https://pc.zp.ua';
 const TIMEOUT_MS=15000;
 const INVALID={
@@ -29,7 +30,7 @@ async function request(path,{method='GET',body,fetchImpl=fetch,timeoutMs=TIMEOUT
         method,redirect:'error',
         headers:{
           'Accept':'application/json',
-          'User-Agent':'project-consulting-mcp/0.1.0',
+          'User-Agent':'project-consulting-mcp/0.1.1',
           ...(body?{'Content-Type':'application/json'}:{})
         },
         ...(body?{body:JSON.stringify(body)}:{}),
@@ -67,7 +68,8 @@ export async function searchIndex(args={},options={}){
   // successful HTTP response is not proof that the expected contract is present.
   if(payload.ok!==true||payload.proof!=='metadata_only'||
      payload.taskSuccessVerified!==false||!Array.isArray(payload.items)||
-     !Number.isSafeInteger(payload.totalMatches)||payload.items.length>24)
+     !Number.isSafeInteger(payload.totalMatches)||payload.items.length>24||
+     !indexSearchOutputSchema.safeParse(payload).success)
     return error('INVALID_INDEX_RESPONSE','Index response did not match the public metadata-only contract.');
   const items=payload.items;
   const summary=items.slice(0,limit).map((item,i)=>{
@@ -82,7 +84,8 @@ export async function searchIndex(args={},options={}){
 export async function indexCapabilities(options={}){
   const payload=await request('/api/v1/index/capabilities',options);
   if(payload.isError)return payload;
-  if(payload.ok!==true||payload.product!=='Project Consulting Index')
+  if(payload.ok!==true||payload.product!=='Project Consulting Index'||
+     !indexCapabilitiesOutputSchema.safeParse(payload).success)
     return error('INVALID_INDEX_RESPONSE','Capabilities response did not match the Index API contract.');
   return {structuredContent:payload,content:[{type:'text',text:
     'Project Consulting Index capabilities (public API). Listing metadata is not verified task success or safety proof.\n'+
