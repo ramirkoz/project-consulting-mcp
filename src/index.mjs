@@ -6,14 +6,16 @@ import {serveStdio} from '@modelcontextprotocol/server/stdio';
 import * as z from 'zod/v4';
 import {searchIndex,indexCapabilities} from './index-tools.mjs';
 import {exportGuide} from './coster-guide.mjs';
+import {indexSearchOutputSchema,indexCapabilitiesOutputSchema,costerExportGuideOutputSchema} from './output-schemas.mjs';
 const readonly=(openWorld=false)=>({
   readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:openWorld
 });
 export function createServer(){
-  const server=new McpServer({name:'project-consulting-index',version:'0.1.0'});
+  const server=new McpServer({name:'project-consulting-index',version:'0.1.1'});
   server.registerTool('index_search_mcp_servers',{
     description:'Search dated MCP server metadata in Project Consulting Index. Listings are NOT proof of safety, uptime, or task success.',
     annotations:readonly(true),
+    outputSchema:indexSearchOutputSchema,
     inputSchema:z.object({
       query:z.string().min(2).max(56),
       limit:z.number().int().min(1).max(24).default(12),
@@ -23,11 +25,13 @@ export function createServer(){
   server.registerTool('index_capabilities',{
     description:'Read public Project Consulting Index feature availability, limits and evidence caveats.',
     annotations:readonly(true),
+    outputSchema:indexCapabilitiesOutputSchema,
     inputSchema:z.object({})
   },()=>indexCapabilities());
   server.registerTool('coster_export_guide',{
     description:'Get static instructions for obtaining billing and usage exports for a browser-based Coster audit. Does not read local files.',
     annotations:readonly(false),
+    outputSchema:costerExportGuideOutputSchema,
     inputSchema:z.object({provider:z.enum(['openai','openrouter','anthropic','gemini']).optional()})
   },({provider})=>exportGuide(provider));
   return server;

@@ -1,6 +1,6 @@
 {
   "name": "@ramirkoz/project-consulting-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read-only Project Consulting Index search and AI billing export guides",
   "type": "module",
   "bin": {

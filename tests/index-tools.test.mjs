@@ -72,6 +72,18 @@ test('a 200 response without verified metadata-only envelope is NOT treated as a
  });
  assert.equal(broken.isError,true);
  assert.equal(broken.structuredContent.error,'INVALID_INDEX_RESPONSE');
+ const malformedItem=await searchIndex({query:'pdf'},{
+   fetchImpl:async()=>reply({ok:true,proof:'metadata_only',
+     totalMatches:1,taskSuccessVerified:false,
+     items:[{name:'',description:'malformed'}]})
+ });
+ assert.equal(malformedItem.isError,true);
+ assert.equal(malformedItem.structuredContent.error,'INVALID_INDEX_RESPONSE');
+ const negativeCount=await searchIndex({query:'pdf'},{
+   fetchImpl:async()=>reply({ok:true,proof:'metadata_only',
+     totalMatches:-1,taskSuccessVerified:false,items:[]})
+ });
+ assert.equal(negativeCount.isError,true);
  const badCap=await indexCapabilities({
    fetchImpl:async()=>reply({message:'unrelated JSON'})
  });
