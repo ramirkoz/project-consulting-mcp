@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.ramirkoz/project-consulting",
   "title": "Project Consulting: Index",
-  "description": "Free read-only MCP search of dated Index publisher metadata and static AI billing export guidance; no local file audit.",
+  "description": "Free MCP discovery and AI billing export guides. Read-only metadata; no file auditing.",
   "websiteUrl": "https://pc.zp.ua/developers/",
   "repository": {
     "url": "https://github.com/ramirkoz/project-consulting-mcp",
