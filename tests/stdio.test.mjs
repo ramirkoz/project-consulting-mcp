@@ -39,11 +39,11 @@ test('real SDK v2 stdio starts and lists precisely three read-only tools; static
     assert.equal(guide.structuredContent?.phase,'A');
     assert.match(guide.content?.[0]?.text||'',/single authoritative Spend view/);
 
-    // This validation error is generated before any HTTPS call. The real
+    // This error passes the SDK min-length schema, then our safe query validation rejects punctuation before any HTTPS call. The real
     // pinned SDK client must receive it as an ordinary isError tool result,
     // not throw due to the newly published success outputSchema.
     const bad=await client.callTool({
-      name:'index_search_mcp_servers',arguments:{query:'?'}
+      name:'index_search_mcp_servers',arguments:{query:'??'}
     });
     assert.equal(bad.isError,true);
     assert.equal(bad.structuredContent?.error,'INVALID_SEARCH_TERM');
