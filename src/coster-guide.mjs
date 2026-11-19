@@ -45,7 +45,7 @@ export function exportGuide(provider){
     return {isError:true,structuredContent:{error:'INVALID_PROVIDER'},
       content:[{type:'text',text:'Provider must be openai, openrouter, anthropic, or gemini.'}]};
   const data={phase:'A',guides,freeAuditUrl:'https://pc.zp.ua/coster/',
-    notice:'Free Audit runs locally in the browser. Full Report is a separate, explicit consent workflow. The MCP v0.1 package does not read or audit local files.'};
+    notice:'Free Audit runs locally in the browser. Full Report requires separate explicit consent to contribute a ResearchBundle. The MCP v0.1 package does not read or audit local files.'};
   const text=guides.map(g=>g.provider.toUpperCase()+'\n'+g.instructions.map((s,i)=>
     (i+1)+'. '+s).join('\n')+'\n'+g.dashboard+'\n'+g.notes).join('\n\n');
   return {structuredContent:data,content:[{type:'text',text:text+'\n\n'+data.notice}]};
