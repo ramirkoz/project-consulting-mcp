@@ -1,5 +1,7 @@
 # Project Consulting MCP: Index first
 
+> **Unreleased source candidate 0.1.1 (Draft PR):** Adds advertised output schemas for all three tools, schema validation tests and corrected source metadata. **Not published to npm or MCP Registry.** Install commands below intentionally stay pinned to the actually published 0.1.0 until separately authorized.
+
 **Published:** [`@ramirkoz/project-consulting-mcp@0.1.0`](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp) and [official MCP Registry `io.github.ramirkoz/project-consulting@0.1.0`](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.ramirkoz%2Fproject-consulting/versions/0.1.0).
 
 Phase A provides three read-only tools. It does not read local AI billing files or create reports.
@@ -45,13 +47,13 @@ The Registry name is io.github.ramirkoz/project-consulting. This package is not 
 
 Index records are dated metadata and do not verify successful third-party task execution or whether servers are safe to install.
 
-The Free Audit browser application is available at https://pc.zp.ua/coster/. An optional Full Report requires separate human consent to transfer normalized metrics and contribute an aggregated ResearchBundle. The MCP Phase A tools cannot grant consent or create reports.
+The Free Audit browser application is available at https://pc.zp.ua/coster/. Full Report costs no money but **requires explicit consent to contribute a ResearchBundle**. Without that consent the user receives Free Audit only. The MCP package cannot submit the consent or audit files. The MCP Phase A tools cannot grant consent or create reports.
 
 ## Source, tests and release status
 
 This is the standalone public source repository for Index MCP v0.1.0, licensed under **MIT**. The package is already published on [npm](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp), and the [official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.ramirkoz%2Fproject-consulting/versions/0.1.0) lists it. For local development on Node.js 20+, run `npm ci` and `npm test`; the committed lockfile pins dependencies. The previously published npm and Registry v0.1.0 metadata may still refer to the original private development repository; this public mirror does **not** retroactively modify either published artifact.
 
-No local billing-file audit tool is included in Phase A. Such a capability would require a separate future release with its own offline-only constraints.
+For 0.1.1 source candidates, each successful tool advertises a typed `outputSchema` and returns `structuredContent`. Tool failures keep their existing `isError: true`, `structuredContent: {error, message}` and human-readable text; the pinned MCP SDK must be tested to ensure these errors remain consumable. The public 0.1.0 is immutable and unchanged.\n\nNo local billing-file audit tool is included in Phase A. Such a capability would require a separate future release with its own offline-only constraints.
 
 ## Open ranking benchmark and live MCP demo
 
