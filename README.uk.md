@@ -1,62 +1,51 @@
 # Project Consulting MCP: Index для AI-агентів
 
-**Опубліковано й доступно:** [npm `@ramirkoz/project-consulting-mcp@0.1.1`](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp/v/0.1.1) та [офіційний MCP Registry `io.github.ramirkoz/project-consulting@0.1.1`](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.ramirkoz%2Fproject-consulting/versions/0.1.1).
+**Публічна версія:** `@ramirkoz/project-consulting-mcp@0.1.1` у [npm](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp/v/0.1.1) та `io.github.ramirkoz/project-consulting@0.1.1` в [офіційному MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.ramirkoz%2Fproject-consulting/versions/0.1.1). Вона містить **три** read-only інструменти.
 
-> **Поточна гілка — неопублікований кандидат `0.1.2-next.0`.** Вона додає четвертий MCP-інструмент для структурованого shortlist, але його серверний Index API ще НЕ розгорнуто. Встановлювати цей кандидат як готовий продукт не можна. Публічні npm та Registry залишаються на `0.1.1`.
+**Ця гілка:** підготовлений, але **ЩЕ НЕ ОПУБЛІКОВАНИЙ** кандидат `0.1.2` із четвертим інструментом `index_shortlist_mcp_servers`.
 
-## Опубліковані можливості MCP 0.1.1
+22.11.2026 власник перевірив незалежний Index Agent за адресою `https://pc.zp.ua/index-agent`: HTTP health/capabilities 200, структурований пошук HTTP 200, 2 результати з 2 866 збігів для запиту `search`. Це перевірка **HTTP API**, а не доказ публікації пакета 0.1.2 чи реального використання його стороннім агентом.
 
-| Інструмент | Що робить |
-|---|---|
-| `index_search_mcp_servers` | Безкоштовний пошук за датованими метаданими MCP-каталогу |
-| `index_capabilities` | Показує фактичні можливості та обмеження Index |
-| `coster_export_guide` | Без мережі пояснює, як отримати експорти OpenAI, OpenRouter, Anthropic і Gemini |
+## Інструменти
 
-Ці інструменти не запускають чужі MCP-сервери, не підтверджують їхньої безпеки, не читають локальні фінансові файли й не збирають API-ключі.
+| Інструмент | Функція | Стан |
+| --- | --- | --- |
+| `index_search_mcp_servers` | Пошук в існуючому Index API | Є в 0.1.1 |
+| `index_capabilities` | Поточні можливості Index | Є в 0.1.1 |
+| `coster_export_guide` | Довідка щодо експорту OpenAI, OpenRouter, Claude, Gemini | Є в 0.1.1 |
+| `index_shortlist_mcp_servers` | Структурований безкоштовний пошук за джерелом, статусом і HTTPS-полями | Лише кандидат 0.1.2 |
 
-## Новий інструмент лише в гілці 0.1.2-next.0
+Новий інструмент відбирає записи за явними обмеженнями перед Ranking v3 і повертає **метадані**, а не доказ справності, безпеки чи реального виконання MCP-сервера. Історичне джерело RoninForge має дату **13.09.2026**. Не запускати чужий npm/MCP-код лише на підставі запису в каталозі.
 
-`index_shortlist_mcp_servers` приймає структурований запит:
+Приклад запиту для майбутнього четвертого інструмента:
 
 ```json
 {
-  "query": "pdf",
+  "query": "search",
+  "limit": 2,
   "filters": {
-    "sourceCodes": ["MCP_OFFICIAL_REGISTRY"],
-    "statuses": ["active"],
-    "requireRepositoryUrl": true,
+    "sourceCodes": ["RONINFORGE_STATE_OF_MCP"],
     "excludeDeprecated": true
-  },
-  "limit": 12,
-  "offset": 0
+  }
 }
 ```
 
-Фільтри відбирають записи **за заявленим джерелом, статусом і наявністю коректних HTTPS-посилань**, перед звичайним Ranking v3. Ніяких нових парсерів природної мови, платежів чи перевірок виконання сторонніх інструментів.
+## Встановлення чинної версії
 
-**Важливо:** запис у MCP Registry не доводить, що інструмент створений саме заявленим постачальником. Статус `active` і HTTPS-посилання не доводять справність, безпечність чи успішність MCP-викликів. Відповідь залишається `metadata_only`, `taskSuccessVerified:false`.
-
-Поки backend `/api/v1/index/agent-structured-shortlist` не ввімкнений окремим дозволом, MCP чесно повертає помилку `STRUCTURED_SHORTLIST_UNAVAILABLE`, а не удає, що збігів немає.
-
-## Встановлення чинної публічної версії
-
-Потрібні Node.js 20+ і MCP-клієнт зі stdio.
+Для локального MCP stdio-клієнта потрібен Node.js 20+:
 
 ```bash
 npx -y @ramirkoz/project-consulting-mcp@0.1.1
 ```
 
-Версія `0.1.2-next.0` є тільки у вихідному коді гілки. Команду npm для її встановлення не публікуємо.
+Ця команда запускає сторонній пакет на вашому пристрої. Перевіряйте джерело та права доступу. **Версію 0.1.2 поки не встановлювати:** реліз в npm і Registry ще не здійснено.
 
-## Приватність і фінанси
+## Приватність і реліз
 
-Coster Free Audit безкоштовний. Full Report також безкоштовний, але вимагає окремої явної згоди на дослідницький ResearchBundle. MCP не оформлює цю згоду і не завантажує файли. Index залишається безкоштовним для людей та агентів. Жодного продажу приватних логів чи фінансових CSV/JSON.
+Index залишається безкоштовним для людей та агентів. MCP не читає локальні фінансові експорти, не передає API-ключі, не запускає чужі MCP-сервери та не проводить платежі.
 
-## Статус розробки
+Coster Free Audit безкоштовний. Full Report не має грошової вартості, але потребує явної згоди на ResearchBundle. MCP не може надавати цю згоду замість користувача.
 
-- MCP 0.1.1: опубліковано три read-only інструменти, код у main.
-- MCP 0.1.2-next.0: четвертий інструмент у відокремленій гілці, без npm/Registry публікації.
-- Index P2.0: окремий backend пройшов 5/5 синтетичних тестів на HostPro, але ще не розгорнутий.
-- Новий MCP-кандидат: код і синтетичні тести підготовлені; їхній результат ще не підтверджено.
+Вихідний кандидат має узгоджену версію `0.1.2` у package/lock/Registry metadata. Перед випуском потрібен один контрольований release-preflight, окреме погодження власника на npm-публікацію та окреме оновлення Official MCP Registry. Зміни на HostPro або в Coster не потрібні.
 
-Деталі: [контракт P2.1](docs/INDEX_NEXT_P21_MCP_STRUCTURED_SHORTLIST_CANDIDATE.md). Публікація потребує окремого погодження власника та попередньої активації Index backend. Не змінюємо production, Worker, Discovery, PostgreSQL, cron або Coster.
+Технічний запис: [docs/INDEX_NEXT_P27_STABLE_012_RELEASE_CANDIDATE.md](docs/INDEX_NEXT_P27_STABLE_012_RELEASE_CANDIDATE.md).
