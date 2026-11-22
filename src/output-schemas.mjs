@@ -84,7 +84,7 @@ export const indexStructuredShortlistOutputSchema=z.object({
     excludeDeprecated:z.boolean()
   }),
   items:z.array(z.object({
-    name:z.string().min(1).max(160),
+    name:z.string().regex(/^[A-Za-z0-9][A-Za-z0-9./_:-]{1,159}$/),
     verification:z.enum([
       'PUBLISHER_METADATA_ONLY','REGISTRY_METADATA_ONLY','GITHUB_REPOSITORY_METADATA_ONLY'
     ]),
