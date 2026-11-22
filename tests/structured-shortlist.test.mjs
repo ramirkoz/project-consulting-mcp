@@ -94,6 +94,8 @@ test('tampered proof, task success, ranking, source, filters or offset fail clos
     {...result(),filtersApplied:{...filters,excludeDeprecated:false}},
     {...result(),offset:4},
     {...result(),items:[{...result().items[0],sourceCode:'UNLICENSED_PRIVATE'}]},
+    {...result(),items:[{...result().items[0],endpointUrl:'http://127.0.0.1/private'}]},
+    {...result(),items:[{...result().items[0],repositoryUrl:'https://example.com/misleading-repo'}]},
     {...result(),totalMatches:10,eligibleCatalogRows:2}
   ];
   for(const data of broken){
