@@ -47,6 +47,18 @@ export const costerExportGuideOutputSchema=z.object({
 // responses remain outside this success schema.
 const sourceCode=z.enum(['RONINFORGE_STATE_OF_MCP','MCP_OFFICIAL_REGISTRY','GITHUB_PUBLIC_REPOSITORY']);
 const entryStatus=z.enum(['active','deprecated','candidate','unknown']);
+const publicHttps=z.string().url().refine(value=>{
+  try{
+    const u=new URL(value);
+    return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&
+      !u.search&&!u.hash&&u.hostname.includes('.')&&
+      u.hostname!=='localhost'&&!/^\\d+\\.\\d+\\.\\d+\\.\\d+$/.test(u.hostname);
+  }catch{return false}
+});
+const codeHostHttps=publicHttps.refine(value=>{
+  const host=new URL(value).hostname;
+  return ['github.com','gitlab.com','codeberg.org','bitbucket.org'].includes(host);
+});
 export const indexStructuredShortlistOutputSchema=z.object({
   ok:z.literal(true),
   proof:z.literal('metadata_only'),
@@ -80,7 +92,7 @@ export const indexStructuredShortlistOutputSchema=z.object({
     status:entryStatus,
     title:z.string().max(150).optional(),
     description:z.string().max(550).optional(),
-    endpointUrl:z.string().url().nullable().optional(),
-    repositoryUrl:z.string().url().nullable().optional()
+    endpointUrl:publicHttps.nullable().optional(),
+    repositoryUrl:codeHostHttps.nullable().optional()
   }).passthrough()).max(24)
 }).passthrough();
