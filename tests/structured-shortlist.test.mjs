@@ -57,7 +57,7 @@ test('metadata-only shortlist requests the exact Index API with only declared fi
   assert.notEqual(r.isError,true); // success must not be an MCP error
   assert.equal(seen.length,1);
   const [url,opts]=seen[0];
-  assert.equal(url,'https://pc.zp.ua/api/v1/index/agent-structured-shortlist');
+  assert.equal(url,'https://pc.zp.ua/index-agent/v1/agent-structured-shortlist');
   assert.equal(opts.method,'POST');
   assert.equal(opts.redirect,'error');
   assert.equal(Object.keys(opts.headers).some(k=>/^(origin|sec-fetch-)/i.test(k)),false);
