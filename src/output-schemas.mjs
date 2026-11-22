@@ -40,3 +40,59 @@ export const costerExportGuideOutputSchema=z.object({
   freeAuditUrl:z.literal('https://pc.zp.ua/coster/'),
   notice:z.string().min(1)
 }).passthrough();
+
+ 
+// NEXT candidate only: structured shortlists are never verified MCP executions.
+// Keep success schema strict on provenance/verification claims; SDK isError
+// responses remain outside this success schema.
+const sourceCode=z.enum(['RONINFORGE_STATE_OF_MCP','MCP_OFFICIAL_REGISTRY','GITHUB_PUBLIC_REPOSITORY']);
+const entryStatus=z.enum(['active','deprecated','candidate','unknown']);
+const publicHttps=z.string().url().refine(value=>{
+  try{
+    const u=new URL(value);
+    return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&
+      !u.search&&!u.hash&&u.hostname.includes('.')&&
+      u.hostname!=='localhost'&&!/^\d+\.\d+\.\d+\.\d+$/.test(u.hostname);
+  }catch{return false}
+});
+const codeHostHttps=publicHttps.refine(value=>{
+  const host=new URL(value).hostname;
+  return ['github.com','gitlab.com','codeberg.org','bitbucket.org'].includes(host);
+});
+export const indexStructuredShortlistOutputSchema=z.object({
+  ok:z.literal(true),
+  proof:z.literal('metadata_only'),
+  taskSuccessVerified:z.literal(false),
+  currentUptimeVerified:z.literal(false),
+  independentTaskVerification:z.literal(false),
+  paymentRequired:z.literal(false),
+  researchContributionRecorded:z.literal(false),
+  agentTransport:z.literal('structured_publisher_metadata_only'),
+  selectionScope:z.literal('full_local_metadata_before_ranking'),
+  rankingVersion:z.literal('index-catalog-ranking-v3-unchanged'),
+  totalMatches:z.number().int().nonnegative(),
+  eligibleCatalogRows:z.number().int().min(0).max(70000),
+  offset:z.number().int().min(0).max(70000),
+  limit:z.number().int().min(1).max(24),
+  hasMore:z.boolean(),
+  nextOffset:z.number().int().nonnegative().nullable(),
+  filtersApplied:z.object({
+    sourceCodes:z.array(sourceCode).max(3),
+    statuses:z.array(entryStatus).max(4),
+    requireRepositoryUrl:z.boolean(),
+    requireEndpointUrl:z.boolean(),
+    excludeDeprecated:z.boolean()
+  }),
+  items:z.array(z.object({
+    name:z.string().regex(/^[A-Za-z0-9][A-Za-z0-9./_:-]{1,159}$/),
+    verification:z.enum([
+      'PUBLISHER_METADATA_ONLY','REGISTRY_METADATA_ONLY','GITHUB_REPOSITORY_METADATA_ONLY'
+    ]),
+    sourceCode,
+    status:entryStatus,
+    title:z.string().max(150).optional(),
+    description:z.string().max(550).optional(),
+    endpointUrl:publicHttps.nullable().optional(),
+    repositoryUrl:codeHostHttps.nullable().optional()
+  }).passthrough()).max(24)
+}).passthrough();

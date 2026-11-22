@@ -1,28 +1,51 @@
-# Project Consulting MCP: спочатку Index
+# Project Consulting MCP: Index для AI-агентів
 
-> **Кандидат 0.1.1 у Draft PR, ще НЕ опублікований.** У вихідному коді додаються схеми успішних відповідей трьох інструментів і тести сумісності. Встановлення нижче стосується виключно вже опублікованої версії 0.1.0.
+**Публічна версія:** `@ramirkoz/project-consulting-mcp@0.1.1` у [npm](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp/v/0.1.1) та `io.github.ramirkoz/project-consulting@0.1.1` в [офіційному MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.ramirkoz%2Fproject-consulting/versions/0.1.1). Вона містить **три** read-only інструменти.
 
-**Опубліковано:** [npm-пакет `@ramirkoz/project-consulting-mcp@0.1.0`](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp) та [офіційний MCP Registry `io.github.ramirkoz/project-consulting@0.1.0`](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.ramirkoz%2Fproject-consulting/versions/0.1.0).
+**Ця гілка:** підготовлений, але **ЩЕ НЕ ОПУБЛІКОВАНИЙ** кандидат `0.1.2` із четвертим інструментом `index_shortlist_mcp_servers`.
 
-Фаза A містить три інструменти лише для читання:
+22.11.2026 власник перевірив незалежний Index Agent за адресою `https://pc.zp.ua/index-agent`: HTTP health/capabilities 200, структурований пошук HTTP 200, 2 результати з 2 866 збігів для запиту `search`. Це перевірка **HTTP API**, а не доказ публікації пакета 0.1.2 чи реального використання його стороннім агентом.
 
-- index_search_mcp_servers: пошук датованих метаданих MCP-серверів через відкритий API Index. Результати не підтверджують справність чи безпеку сторонніх серверів.
-- index_capabilities: інформація про публічні можливості Index.
-- coster_export_guide: локальна статична довідка, де отримати офіційні експорти OpenAI, OpenRouter, Claude та Gemini.
+## Інструменти
 
-Пошуковий запит Index передає тільки текст пошуку, offset і limit на pc.zp.ua. **Фаза A не читає файлів користувача**, не створює Full Report, не передає фінансових CSV, не приймає дослідницької згоди й не збирає API-ключі.
+| Інструмент | Функція | Стан |
+| --- | --- | --- |
+| `index_search_mcp_servers` | Пошук в існуючому Index API | Є в 0.1.1 |
+| `index_capabilities` | Поточні можливості Index | Є в 0.1.1 |
+| `coster_export_guide` | Довідка щодо експорту OpenAI, OpenRouter, Claude, Gemini | Є в 0.1.1 |
+| `index_shortlist_mcp_servers` | Структурований безкоштовний пошук за джерелом, статусом і HTTPS-полями | Лише кандидат 0.1.2 |
 
-Потрібні Node.js >= 20, MCP SDK v2, Zod 4. Сервер використовує stdio і запускається тільки локальним MCP-клієнтом, а не як додатковий сервер на HostPro.
+Новий інструмент відбирає записи за явними обмеженнями перед Ranking v3 і повертає **метадані**, а не доказ справності, безпеки чи реального виконання MCP-сервера. Історичне джерело RoninForge має дату **13.09.2026**. Не запускати чужий npm/MCP-код лише на підставі запису в каталозі.
 
-Для Full Report Coster людина має відкрити https://pc.zp.ua/coster/ та надати **обов'язкову явну згоду на формування ResearchBundle**. Без згоди доступний лише Free Audit. Повний звіт не потребує грошової оплати. MCP не збирає цю згоду й не читає файлів.
+Приклад запиту для майбутнього четвертого інструмента:
 
-0.1.1 додає `outputSchema` тільки для успішних результатів, зберігає формат помилок `isError`; перевірка MCP SDK 2.4.0 та окремий дозвіл на публікацію ще потрібні.\n\nЦе окремий публічний репозиторій вихідного коду MCP із ліцензією **MIT**. Версія **0.1.0** вже опублікована в npm та офіційному MCP Registry. Для локальної розробки (Node.js 20+) використовуйте `npm ci` та `npm test`. Залежності зафіксовано в `package-lock.json`. Зверніть увагу: вже опубліковані метадані npm/Registry 0.1.0 могли зберегти посилання на початковий приватний репозиторій; поява цього репозиторію їх автоматично не змінює. Нові зміни випускаються тільки наступною версією.
+```json
+{
+  "query": "search",
+  "limit": 2,
+  "filters": {
+    "sourceCodes": ["RONINFORGE_STATE_OF_MCP"],
+    "excludeDeprecated": true
+  }
+}
+```
 
-Phase B із локальним coster_audit_files — майбутній окремий випуск після фази Index.
+## Встановлення чинної версії
 
-## Відкритий benchmark і демонстрація MCP
+Для локального MCP stdio-клієнта потрібен Node.js 20+:
 
-- [54 перевірочні запити Index, методика та результати v1/v3](benchmarks/index-ranking/README.md). Історичні цифри надані Claude; оригінальний незмінний знімок каталогу не входить до пакета. Пошук за призначенням поки слабкий.
-- [Реальна демонстрація MCP через `npx`](examples/npx-live-demo.mjs): запуск stdio, три інструменти лише для читання та перевірка пошуку `github`.
+```bash
+npx -y @ramirkoz/project-consulting-mcp@0.1.1
+```
 
-Це матеріали для розробників, **не** новий реліз npm. Пакет `0.1.0` не змінюється.
+Ця команда запускає сторонній пакет на вашому пристрої. Перевіряйте джерело та права доступу. **Версію 0.1.2 поки не встановлювати:** реліз в npm і Registry ще не здійснено.
+
+## Приватність і реліз
+
+Index залишається безкоштовним для людей та агентів. MCP не читає локальні фінансові експорти, не передає API-ключі, не запускає чужі MCP-сервери та не проводить платежі.
+
+Coster Free Audit безкоштовний. Full Report не має грошової вартості, але потребує явної згоди на ResearchBundle. MCP не може надавати цю згоду замість користувача.
+
+Вихідний кандидат має узгоджену версію `0.1.2` у package/lock/Registry metadata. Перед випуском потрібен один контрольований release-preflight, окреме погодження власника на npm-публікацію та окреме оновлення Official MCP Registry. Зміни на HostPro або в Coster не потрібні.
+
+Технічний запис: [docs/INDEX_NEXT_P27_STABLE_012_RELEASE_CANDIDATE.md](docs/INDEX_NEXT_P27_STABLE_012_RELEASE_CANDIDATE.md).

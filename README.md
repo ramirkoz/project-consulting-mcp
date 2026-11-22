@@ -1,63 +1,71 @@
 # Project Consulting MCP: Index first
 
-> **Unreleased source candidate 0.1.1 (Draft PR):** Adds advertised output schemas for all three tools, schema validation tests and corrected source metadata. **Not published to npm or MCP Registry.** Install commands below intentionally stay pinned to the actually published 0.1.0 until separately authorized.
+**Published today:** `@ramirkoz/project-consulting-mcp@0.1.1` on [npm](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp/v/0.1.1) and `io.github.ramirkoz/project-consulting@0.1.1` in the [official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.ramirkoz%2Fproject-consulting/versions/0.1.1), with **three** read-only tools.
 
-**Published:** [`@ramirkoz/project-consulting-mcp@0.1.0`](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp) and [official MCP Registry `io.github.ramirkoz/project-consulting@0.1.0`](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.ramirkoz%2Fproject-consulting/versions/0.1.0).
+**This source branch:** a **NOT YET PUBLISHED** stable `0.1.2` release candidate. It adds a fourth tool, `index_shortlist_mcp_servers`, that calls the independently deployed `https://pc.zp.ua/index-agent/v1/agent-structured-shortlist`. The owner verified the Index Agent live HTTP API on 2026-11-22: health/capabilities HTTP 200 and one real synthetic metadata-only shortlist POST HTTP 200 (2 of 2,866 matches for the query `search`). **This is not proof that the unpublished MCP 0.1.2 package is installed, publicly available, or independently exercised by an external MCP client.**
 
-Phase A provides three read-only tools. It does not read local AI billing files or create reports.
+## Tools
 
-| Tool | Network | Capability |
+| MCP tool | Endpoint or operation | Status |
 | --- | --- | --- |
-| index_search_mcp_servers | HTTPS request to pc.zp.ua | Dated Index catalog search, NOT proof of safety or uptime |
-| index_capabilities | HTTPS request to pc.zp.ua | Public Index capabilities |
-| coster_export_guide | No network | Static instructions for obtaining OpenAI, OpenRouter, Anthropic and Gemini exports |
+| `index_search_mcp_servers` | Existing Index purpose search on `pc.zp.ua/api` | Published 0.1.1 |
+| `index_capabilities` | Existing Index capabilities on `pc.zp.ua/api` | Published 0.1.1 |
+| `coster_export_guide` | Static instructions for exporting OpenAI/OpenRouter/Anthropic/Gemini billing data | Published 0.1.1 |
+| `index_shortlist_mcp_servers` | Free, filtered, typed metadata shortlist via `pc.zp.ua/index-agent` | Candidate 0.1.2 only |
 
-Index search sends only the query, offset and limit. No account credentials, API keys or billing files are sent. All third-party entries are unverified metadata.
+The new fourth tool applies strict source, status and public HTTPS URL constraints **before** the unchanged Ranking v3. It rejects unrecognized filters, unexpected fields and contradictions, and treats unavailable/disabled responses as errors rather than fake empty search results.
 
-## Requirements and development
+Example input to the *future fourth tool*:
 
-Node.js 20+, ESM, the MCP TypeScript SDK v2 (@modelcontextprotocol/server) and Zod v4. From the mcp directory on a build/CI environment:
+```json
+{
+  "query": "search",
+  "limit": 2,
+  "offset": 0,
+  "filters": {
+    "sourceCodes": ["RONINFORGE_STATE_OF_MCP"],
+    "excludeDeprecated": true
+  }
+}
+```
 
-    npm install
-    npm test
-    node src/index.mjs
+Records are **publisher metadata**, not proof of verified third-party task execution, uptime, safety, publisher identity, or permission to run/install third-party code. The authenticated base snapshot is dated **2026-09-13**, so do not interpret base records as current liveness tests. The package does not read billing files, execute remote MCP tools, acquire user credentials, take payments, or contribute ResearchBundles.
 
-The process speaks MCP JSON-RPC via stdio. Stdout is reserved for the protocol and stderr for diagnostics.
+## Install the actual published release
 
-## Client installation
+Requires Node.js 20+ and a local MCP stdio client:
 
-Example local stdio client configuration (requires Node.js 20+):
-
-    {
-      "mcpServers": {
-        "project-consulting": {
-          "command": "npx",
-          "args": ["-y", "@ramirkoz/project-consulting-mcp@0.1.0"]
-        }
-      }
+```json
+{
+  "mcpServers": {
+    "project-consulting": {
+      "command": "npx",
+      "args": ["-y", "@ramirkoz/project-consulting-mcp@0.1.1"]
     }
+  }
+}
+```
 
 For Claude Code:
 
-    claude mcp add project-consulting -- npx -y @ramirkoz/project-consulting-mcp@0.1.0
+```bash
+claude mcp add project-consulting -- npx -y @ramirkoz/project-consulting-mcp@0.1.1
+```
 
-The Registry name is io.github.ramirkoz/project-consulting. This package is not a remote MCP endpoint for ChatGPT.
+Installing any MCP npm package executes third-party code on the client's machine. Review the source and requested permissions; don't pass secrets into untrusted tools. Do **not** replace 0.1.1 in the example with 0.1.2 until an independently confirmed npm and Registry release.
 
-## Safety and privacy
+## Source development and release gate
 
-Index records are dated metadata and do not verify successful third-party task execution or whether servers are safe to install.
+```bash
+npm ci --ignore-scripts
+npm test
+npm pack --dry-run
+```
 
-The Free Audit browser application is available at https://pc.zp.ua/coster/. Full Report costs no money but **requires explicit consent to contribute a ResearchBundle**. Without that consent the user receives Free Audit only. The MCP package cannot submit the consent or audit files. The MCP Phase A tools cannot grant consent or create reports.
+The release candidate uses the MCP TypeScript SDK 2.4.0 and Zod 4. It retains read-only stdio transport; it is **not** a remote MCP endpoint for ChatGPT.
 
-## Source, tests and release status
+A release requires a separately approved, pinned source and one focused package/SDK acceptance, followed by **owner-authorized npm publication first** and an **owner-authorized official MCP Registry record second**. npm/Registry currently remain at 0.1.1. Only publish the exact version that matches `package.json`, `package-lock.json`, server runtime version and `server.json`.
 
-This is the standalone public source repository for Index MCP v0.1.0, licensed under **MIT**. The package is already published on [npm](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp), and the [official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.ramirkoz%2Fproject-consulting/versions/0.1.0) lists it. For local development on Node.js 20+, run `npm ci` and `npm test`; the committed lockfile pins dependencies. The previously published npm and Registry v0.1.0 metadata may still refer to the original private development repository; this public mirror does **not** retroactively modify either published artifact.
+The browser-based [Coster Free Audit](https://pc.zp.ua/coster/) is free. Full Report also costs no money but requires the user's explicit ResearchBundle research consent; the MCP package cannot grant that consent or transmit the user's billing files.
 
-For 0.1.1 source candidates, each successful tool advertises a typed `outputSchema` and returns `structuredContent`. Tool failures keep their existing `isError: true`, `structuredContent: {error, message}` and human-readable text; the pinned MCP SDK must be tested to ensure these errors remain consumable. The public 0.1.0 is immutable and unchanged.\n\nNo local billing-file audit tool is included in Phase A. Such a capability would require a separate future release with its own offline-only constraints.
-
-## Open ranking benchmark and live MCP demo
-
-- [Index ranking v1 vs v3: 54-case public benchmark](benchmarks/index-ranking/README.md), with [judged queries](benchmarks/index-ranking/gold.json), [reproducible runner](benchmarks/index-ranking/reproduce.mjs), and exact ranking source. Historical scores were supplied by Claude; snapshots are not included, and purpose-query retrieval is still weak.
-- [Run a real `npx` → stdio MCP search demo](examples/npx-live-demo.mjs). The demo checks that `github` ranks the vendor-owned MCP metadata first, without running third-party tools.
-
-These are *read-only developer artifacts*, not additional npm tools or a new package version. The baseline `0.1.0` remains unchanged.
+This project is under the MIT license. Source and technical release notes: [docs/INDEX_NEXT_P27_STABLE_012_RELEASE_CANDIDATE.md](docs/INDEX_NEXT_P27_STABLE_012_RELEASE_CANDIDATE.md).
