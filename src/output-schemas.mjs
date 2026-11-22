@@ -52,7 +52,7 @@ const publicHttps=z.string().url().refine(value=>{
     const u=new URL(value);
     return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&
       !u.search&&!u.hash&&u.hostname.includes('.')&&
-      u.hostname!=='localhost'&&!/^\\d+\\.\\d+\\.\\d+\\.\\d+$/.test(u.hostname);
+      u.hostname!=='localhost'&&!/^\d+\.\d+\.\d+\.\d+$/.test(u.hostname);
   }catch{return false}
 });
 const codeHostHttps=publicHttps.refine(value=>{
