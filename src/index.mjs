@@ -11,7 +11,7 @@ const readonly=(openWorld=false)=>({
   readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:openWorld
 });
 export function createServer(){
-  const server=new McpServer({name:'project-consulting-index',version:'0.1.2-next.0'});
+  const server=new McpServer({name:'project-consulting-index',version:'0.1.2'});
   server.registerTool('index_search_mcp_servers',{
     description:'Search dated MCP server metadata in Project Consulting Index. Listings are NOT proof of safety, uptime, or task success.',
     annotations:readonly(true),
@@ -23,7 +23,7 @@ export function createServer(){
     })
   },args=>searchIndex(args));
   server.registerTool('index_shortlist_mcp_servers',{
-    description:'Filter dated Index publisher metadata by explicit source, status and public HTTPS link requirements, then reuse unchanged Ranking v3. Metadata only: no MCP execution, uptime, safety, or task success verification. Not enabled until Index endpoint is released.',
+    description:'Filter dated Index publisher metadata by explicit source, status and public HTTPS link requirements, then reuse unchanged Ranking v3. Metadata only: no MCP execution, uptime, safety, or task success verification. Live Index endpoint is independently released; metadata-only, no task execution.',
     annotations:readonly(true),
     outputSchema:indexStructuredShortlistOutputSchema,
     inputSchema:z.strictObject({
