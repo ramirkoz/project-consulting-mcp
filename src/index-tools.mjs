@@ -137,7 +137,7 @@ export async function structuredIndexShortlist(args={},options={}){
     requireEndpointUrl:filters.requireEndpointUrl??false,
     excludeDeprecated:filters.excludeDeprecated??true
   };
-  const payload=await request('/api/v1/index/agent-structured-shortlist',{
+  const payload=await request('/index-agent/v1/agent-structured-shortlist',{
     method:'POST',body:{search:query,limit,offset,filters:applied},
     errorCodes:{503:'STRUCTURED_SHORTLIST_UNAVAILABLE'},...options
   });
