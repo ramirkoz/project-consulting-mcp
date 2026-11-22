@@ -30,7 +30,7 @@ async function request(path,{method='GET',body,fetchImpl=fetch,timeoutMs=TIMEOUT
         method,redirect:'error',
         headers:{
           'Accept':'application/json',
-          'User-Agent':'project-consulting-mcp/0.1.1',
+          'User-Agent':'project-consulting-mcp/0.1.2-next.0',
           ...(body?{'Content-Type':'application/json'}:{})
         },
         ...(body?{body:JSON.stringify(body)}:{}),
