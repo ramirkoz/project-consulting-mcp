@@ -6,7 +6,7 @@
 
 - **Already public and immutable:** `@ramirkoz/project-consulting-mcp@0.1.1`, official Registry `io.github.ramirkoz/project-consulting@0.1.1`, three read-only tools.
 - **Backend implemented and verified source-only:** private `ramirkoz/AI-Cost-Auditor` branch `task/index-next-p20-structured-agent-shortlist`, pinned `84a0439aa3807088c1533c9c357331c51c28c394`; owner HostPro Node24 screenshot `tests 5 / pass 5 / fail 0`, `P20_SOURCE_ONLY_TEST_GATE=PASS`, `P20_NO_DEPLOY_NO_PAYMENT_NO_CRON_CHANGE=YES`.
-- **Backend remains NOT DEPLOYED:** `POST https://pc.zp.ua/api/v1/index/agent-structured-shortlist` is private source only; `PC_INDEX_AGENT_STRUCTURED_SHORTLIST_ENABLED` defaults OFF. Its existing purpose-search/census readiness gate is independent.
+- **Backend remains NOT DEPLOYED:** `POST https://pc.zp.ua/index-agent/v1/agent-structured-shortlist` is private source only; `PC_INDEX_AGENT_STRUCTURED_SHORTLIST_ENABLED` defaults OFF. Its existing purpose-search/census readiness gate is independent.
 - **This unmerged source branch:** `task/index-next-p21-structured-shortlist-mcp-candidate`, package version `0.1.2-next.0`. It is an internal version marker, NOT a released npm version. `server.json` intentionally continues to describe already published version 0.1.1 and **must not** be used to publish the prerelease.
 
 ## Fourth candidate tool
@@ -53,3 +53,8 @@ Successful `structuredContent` requires exact Index contract: `proof:"metadata_o
 Future independent release sequence, each requiring owner approval: (1) Index backend P2 HTTP release/feature enable with truthful status and rollback; (2) typed MCP SDK integration test against expected API response and new package build; (3) separately approve stable version bump, npm publication and official MCP Registry metadata. Until those happen, existing public MCP 0.1.1 remains the only endorsed installable package.
 
 **No changes** to Coster, ResearchBundle, paid datasets, wallets, Index Worker OFF, Discovery cap 20,000, Index production Ranking v3, PG/cron, or legacy feedback API.
+
+
+## P2.2 sidecar path dependency
+
+The fourth candidate tool now targets the prospective **isolated** `/index-agent/v1/agent-structured-shortlist` mount instead of rewriting Coster's established `/api` routes. This is still **source-only**: no HostPro Passenger mount, no public Index API and no MCP publication. The unchanged published tools must remain on their existing /api endpoints. A distinct owner GO is necessary before enabling the sidecar or publishing a new MCP version.
