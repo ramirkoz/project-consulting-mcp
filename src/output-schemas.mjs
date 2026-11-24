@@ -1,4 +1,4 @@
-// MCP v0.1.1 output contracts for three READ-ONLY tools.
+// MCP read-only output contracts. New P1.5f exact comparison is metadata only.
 // Enforce stable core fields while allowing new additive fields from Index API.
 // Tool errors use MCP isError=true; the SDK is expected to skip success-schema
 // validation for errors. Tests MUST exercise real 2.4.0 stdio client behavior.
