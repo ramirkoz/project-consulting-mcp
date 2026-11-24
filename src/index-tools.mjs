@@ -1,7 +1,9 @@
 // Read-only Index API helpers. No credentials, tracking, dynamic hosts, or raw billing files.
-import {indexSearchOutputSchema,indexCapabilitiesOutputSchema,indexStructuredShortlistOutputSchema} from './output-schemas.mjs';
+import {indexSearchOutputSchema,indexCapabilitiesOutputSchema,indexStructuredShortlistOutputSchema,indexExactCompareOutputSchema} from './output-schemas.mjs';
 const ORIGIN='https://pc.zp.ua';
 const TIMEOUT_MS=15000;
+const EXACT_COMPARE_NAME=/^[A-Za-z0-9][A-Za-z0-9./_:-]{1,159}$/;
+
 const INVALID={
   400:'INVALID_SEARCH_TERM',
   413:'SEARCH_TOO_LARGE',
@@ -30,7 +32,7 @@ async function request(path,{method='GET',body,fetchImpl=fetch,timeoutMs=TIMEOUT
         method,redirect:'error',
         headers:{
           'Accept':'application/json',
-          'User-Agent':'project-consulting-mcp/0.1.2',
+          'User-Agent':'project-consulting-mcp/0.1.3',
           ...(body?{'Content-Type':'application/json'}:{})
         },
         ...(body?{body:JSON.stringify(body)}:{}),
@@ -159,4 +161,48 @@ export async function structuredIndexShortlist(args={},options={}){
       (summary||'No publisher metadata matches the requested filters.')+
       '\nMetadata only. Registry listing and HTTPS URLs do not verify tool safety, uptime, actual execution, or agent task success.'}]
   };
+}
+
+
+// P1.5f: a fifth read-only MCP tool over the already-live Index Agent route.
+// Strictly exact-name comparison; no fuzzy discovery, credential use or tool execution.
+export function validateExactCompare(args={}){
+ if(!isRecord(args)||Object.keys(args).length!==1||
+    !Object.hasOwn(args,'names')||!Array.isArray(args.names)||
+    args.names.length<2||args.names.length>4||
+    !args.names.every(name=>typeof name==='string'&&EXACT_COMPARE_NAME.test(name))||
+    new Set(args.names).size!==args.names.length)
+  return 'Provide exactly 2–4 unique MCP server names with supported characters; no additional fields.';
+ if(Buffer.byteLength(JSON.stringify({names:args.names}),'utf8')>640)
+  return 'Comparison request exceeds the 640-byte limit.';
+ return null;
+}
+export async function compareIndexServers(args={},options={}){
+ const invalid=validateExactCompare(args);
+ if(invalid)return error('INVALID_AGENT_COMPARE_REQUEST',invalid);
+ const names=[...args.names];
+ const payload=await request('/index-agent/v1/agent-exact-compare',{
+  method:'POST',body:{names},errorCodes:{
+   400:'INVALID_AGENT_COMPARE_REQUEST',
+   413:'COMPARE_TOO_LARGE',
+   429:'RATE_LIMITED',
+   503:'AGENT_COMPARE_UNAVAILABLE'
+  },...options
+ });
+ if(payload.isError)return payload;
+ if(!indexExactCompareOutputSchema.safeParse(payload).success||
+    payload.requested!==names.length||payload.items.length!==names.length||
+    payload.found!==payload.items.filter(item=>item.found).length||
+    payload.items.some((item,i)=>item.name!==names[i]))
+  return error('INVALID_INDEX_RESPONSE',
+    'Index exact comparison did not match its bounded publisher-metadata-only contract.');
+ const summary=payload.items.map(item=>{
+  if(!item.found)return item.name+': not in current local metadata';
+  return item.name+': '+item.publisherStatus+' publisher status; '+item.verification;
+ }).join('\n');
+ return {
+  structuredContent:payload,
+  content:[{type:'text',text:summary+
+   '\nPublisher and dated historical metadata only. This does not verify MCP tool execution, installation, security, task success, or current uptime.'}]
+ };
 }
