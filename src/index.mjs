@@ -4,14 +4,14 @@
 import {McpServer} from '@modelcontextprotocol/server';
 import {serveStdio} from '@modelcontextprotocol/server/stdio';
 import * as z from 'zod/v4';
-import {searchIndex,indexCapabilities,structuredIndexShortlist} from './index-tools.mjs';
+import {searchIndex,indexCapabilities,structuredIndexShortlist,compareIndexServers} from './index-tools.mjs';
 import {exportGuide} from './coster-guide.mjs';
-import {indexSearchOutputSchema,indexCapabilitiesOutputSchema,costerExportGuideOutputSchema,indexStructuredShortlistOutputSchema} from './output-schemas.mjs';
+import {indexSearchOutputSchema,indexCapabilitiesOutputSchema,costerExportGuideOutputSchema,indexStructuredShortlistOutputSchema,indexExactCompareOutputSchema} from './output-schemas.mjs';
 const readonly=(openWorld=false)=>({
   readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:openWorld
 });
 export function createServer(){
-  const server=new McpServer({name:'project-consulting-index',version:'0.1.2'});
+  const server=new McpServer({name:'project-consulting-index',version:'0.1.3'});
   server.registerTool('index_search_mcp_servers',{
     description:'Search dated MCP server metadata in Project Consulting Index. Listings are NOT proof of safety, uptime, or task success.',
     annotations:readonly(true),
@@ -42,6 +42,15 @@ export function createServer(){
       }).optional()
     })
   },args=>structuredIndexShortlist(args));
+  server.registerTool('index_compare_mcp_servers',{
+    description:'Compare 2–4 exact MCP server names using dated Index publisher metadata. No verified uptime, safety, installation, tool execution or task success.',
+    annotations:readonly(true),
+    outputSchema:indexExactCompareOutputSchema,
+    inputSchema:z.strictObject({
+      names:z.array(z.string().regex(/^[A-Za-z0-9][A-Za-z0-9./_:-]{1,159}$/))
+        .min(2).max(4).refine(names=>new Set(names).size===names.length)
+    })
+  },args=>compareIndexServers(args));
   server.registerTool('index_capabilities',{
     description:'Read public Project Consulting Index feature availability, limits and evidence caveats.',
     annotations:readonly(true),
