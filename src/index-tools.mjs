@@ -98,8 +98,8 @@ export async function indexCapabilities(options={}){
 }
 
 
-// P2.7 source release candidate; Index Agent sidecar was enabled on the live
-// server on 2026-11-22. MCP package 0.1.2 is NOT published until owner GO.
+// P1.5f is an unpublished 0.1.3 candidate. Existing shortlist is retained;
+// the new exact comparison API was owner-accepted on 2026-11-24.
 const sources=new Set(['RONINFORGE_STATE_OF_MCP','MCP_OFFICIAL_REGISTRY','GITHUB_PUBLIC_REPOSITORY']);
 const statuses=new Set(['active','deprecated','candidate','unknown']);
 const topKeys=new Set(['query','limit','offset','filters']);
