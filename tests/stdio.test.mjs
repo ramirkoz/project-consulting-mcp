@@ -6,7 +6,7 @@ import {Client} from '@modelcontextprotocol/client';
 import {StdioClientTransport} from '@modelcontextprotocol/client/stdio';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-test('real SDK v2 stdio starts and lists precisely four read-only tools in an unpublished candidate; static guide makes no network calls',
+test('real SDK v2 stdio starts and lists precisely five read-only tools in a source-only candidate; static guide makes no network calls',
  {timeout:20000},async()=>{
   const client=new Client({name:'project-consulting-test',version:'0.1.2-next.0'});
   const transport=new StdioClientTransport({
@@ -16,7 +16,7 @@ test('real SDK v2 stdio starts and lists precisely four read-only tools in an un
     await client.connect(transport);
     const {tools}=await client.listTools();
     assert.deepEqual(tools.map(x=>x.name).sort(),[
-      'coster_export_guide','index_capabilities','index_search_mcp_servers','index_shortlist_mcp_servers'
+      'coster_export_guide','index_capabilities','index_compare_mcp_servers','index_search_mcp_servers','index_shortlist_mcp_servers'
     ]);
     for(const t of tools){
       assert.equal(t.annotations?.readOnlyHint,true,'all phase A operations read-only');
@@ -32,6 +32,12 @@ test('real SDK v2 stdio starts and lists precisely four read-only tools in an un
     assert.ok(shortlistTool.outputSchema.required.includes('proof'));
     assert.ok(shortlistTool.outputSchema.required.includes('selectionScope'));
     assert.ok(shortlistTool.outputSchema.required.includes('taskSuccessVerified'));
+    const compareTool=tools.find(x=>x.name==='index_compare_mcp_servers');
+    assert.ok(compareTool);
+    assert.ok(compareTool.outputSchema.required.includes('requested'));
+    assert.ok(compareTool.outputSchema.required.includes('taskSuccessVerified'));
+    assert.ok(compareTool.outputSchema.required.includes('installationVerified'));
+    assert.ok(compareTool.outputSchema.required.includes('securityCertificationVerified'));
     const capabilitiesTool=tools.find(x=>x.name==='index_capabilities');
     assert.ok(capabilitiesTool.outputSchema.required.includes('product'));
     const guideTool=tools.find(x=>x.name==='coster_export_guide');
