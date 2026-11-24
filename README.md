@@ -2,9 +2,9 @@
 
 Free, read-only MCP tools for MCP-server discovery and metadata comparison, plus static AI-billing export guidance. Index and Coster remain free.
 
-**Repository baseline:** `0.1.2` had four read-only tools. **This branch:** a **source-only 0.1.3 candidate** adding the fifth tool `index_compare_mcp_servers`. No npm release or official MCP Registry update has been performed as part of P1.5f. Check those external registries to confirm the current published version; this repository document is not proof of publication.
+**Current release: 0.1.3**, published on November 24, 2026 to [npm](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp/v/0.1.3) and [Official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.ramirkoz%2Fproject-consulting). Five read-only tools are available.
 
-## Tools in the 0.1.3 source candidate
+## Tools in release 0.1.3
 
 | Tool | Operation | Basis |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ Free, read-only MCP tools for MCP-server discovery and metadata comparison, plus
 | `index_capabilities` | Get supported Index features | Existing read-only API |
 | `coster_export_guide` | Static billing-export instructions | No uploaded-file access |
 
-Example for the **new, unpublished MCP tool**:
+Example for the **exact comparison tool**:
 
 ```json
 {"names":["io.github.example/pdf-reader","github:example/pdf-cleaner"]}
@@ -26,16 +26,21 @@ The tool passes **only** the exact requested names to the fixed HTTPS origin, wi
 
 MCP uses **local stdio** (Node.js 20+) with the pinned `@modelcontextprotocol/server` SDK v2.4.0. The new tool calls `POST https://pc.zp.ua/index-agent/v1/agent-exact-compare`, checks 2–4 unique strict names and a 640-byte input cap, validates a typed read-only response and returns errors rather than fabricated success. The API is machine-facing and intentionally rejects browser Origin headers. No remote MCP transport is offered by this package.
 
-### Source review and publication boundary
+### Installation and development
+
+Configure a local MCP client using this stdio command:
 
 ```bash
-npm ci --ignore-scripts
-node --test tests/exact-compare.test.mjs
-node --test tests/stdio.test.mjs
-npm pack --dry-run
+npx -y @ramirkoz/project-consulting-mcp@0.1.3
 ```
 
-These commands are for a controlled **future validation**, not claims of completed P1.5f execution. Before publishing `0.1.3`, confirm current npm and Registry versions, verify package/lock/server.json/runtime consistency and obtain explicit owner approval. Publishing to npm and updating the official MCP Registry are separate authorized actions. Do not replace current installation settings with `@ramirkoz/project-consulting-mcp@0.1.3` until those actions are confirmed.
+Example MCP client configuration (clients may use different configuration formats):
+
+```json
+{"mcpServers":{"project-consulting":{"command":"npx","args":["-y","@ramirkoz/project-consulting-mcp@0.1.3"]}}}
+```
+
+Release 0.1.3 was built from commit `5a049158ab3ec46af97b4f0aef52f72fd418acde`; six targeted tests passed, including mocked HTTP behavior, real SDK stdio inventory and release metadata. This is not certification of external MCP servers. npm and Official MCP Registry publication and latest version were confirmed on November 24, 2026. These README updates are repository documentation; the published 0.1.3 tarball retains the original pre-publication wording.
 
 Coster Free Audit is free; Full Report is also free but requires explicit ResearchBundle consent in the Coster browser application. MCP cannot grant that consent, audit local billing exports, process ResearchBundles or take payments.
 
