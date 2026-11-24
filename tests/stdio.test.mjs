@@ -8,7 +8,7 @@ import {StdioClientTransport} from '@modelcontextprotocol/client/stdio';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 test('real SDK v2 stdio starts and lists precisely five read-only tools in a source-only candidate; static guide makes no network calls',
  {timeout:20000},async()=>{
-  const client=new Client({name:'project-consulting-test',version:'0.1.2-next.0'});
+  const client=new Client({name:'project-consulting-test',version:'0.1.3-next.0'});
   const transport=new StdioClientTransport({
     command:process.execPath,args:['src/index.mjs'],cwd:root
   });
