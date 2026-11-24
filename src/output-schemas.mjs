@@ -96,3 +96,65 @@ export const indexStructuredShortlistOutputSchema=z.object({
     repositoryUrl:codeHostHttps.nullable().optional()
   }).passthrough()).max(24)
 }).passthrough();
+
+
+// P1.5f exact-name comparison. This is deliberately NOT a recommendation,
+// tool-execution, security, installation, or current-uptime certification.
+const exactMcpName=z.string().regex(/^[A-Za-z0-9][A-Za-z0-9./_:-]{1,159}$/);
+const metadataVerification=z.enum([
+ 'PUBLISHER_METADATA_ONLY','REGISTRY_METADATA_ONLY','GITHUB_REPOSITORY_METADATA_ONLY'
+]);
+const historicCensus=z.object({
+ kind:z.literal('dated_third_party_census'),
+ sourceCode:z.literal('RONINFORGE_STATE_OF_MCP'),
+ checkedAt:z.literal('2026-09-13'),
+ verdictAtCensus:z.enum(['healthy','degraded','dead','unknown']).nullable(),
+ registryStatusAtCensus:z.enum(['active','deprecated','deleted','unknown']).nullable(),
+ repositoryStatusAtCensus:z.enum([
+  'alive','archived','not_found','gone','missing','dead','unreachable','unknown'
+ ]).nullable(),
+ remoteInitializeOkAtCensus:z.number().int().nonnegative().nullable(),
+ currentUptimeVerified:z.literal(false),
+ taskSuccessVerified:z.literal(false)
+}).strict();
+const unverifiedFields={
+ installCommand:z.null(),
+ installationVerified:z.literal(false),
+ taskSuccessVerified:z.literal(false),
+ currentUptimeVerified:z.literal(false)
+};
+const foundCompareItem=z.object({
+ name:exactMcpName,found:z.literal(true),
+ sourceCode,verification:metadataVerification,publisherStatus:entryStatus,
+ title:z.string().max(150),description:z.string().max(350),
+ version:z.string().max(60),
+ repositoryUrl:codeHostHttps.nullable(),endpointUrl:publicHttps.nullable(),
+ endpointHttpReachableDeclared:z.boolean(),
+ historicalEvidence:historicCensus.nullable(),
+ securityCertificationVerified:z.literal(false),
+ ...unverifiedFields
+}).strict();
+const absentCompareItem=z.object({
+ name:exactMcpName,found:z.literal(false),
+ reason:z.literal('NOT_IN_CURRENT_LOCAL_METADATA'),
+ ...unverifiedFields
+}).strict();
+
+export const indexExactCompareOutputSchema=z.object({
+ ok:z.literal(true),
+ kind:z.literal('INDEX_AGENT_EXACT_METADATA_COMPARISON_V1'),
+ comparison:z.literal('requested_names_in_input_order'),
+ exactNamesOnly:z.literal(true),
+ requested:z.number().int().min(2).max(4),
+ found:z.number().int().min(0).max(4),
+ items:z.array(z.union([foundCompareItem,absentCompareItem])).min(2).max(4),
+ proof:z.literal('publisher_metadata_only'),
+ taskSuccessVerified:z.literal(false),
+ currentUptimeVerified:z.literal(false),
+ installationVerified:z.literal(false),
+ securityCertificationVerified:z.literal(false),
+ paymentRequired:z.literal(false),
+ researchContributionRecorded:z.literal(false),
+ agentTransport:z.literal('typed_publisher_metadata_comparison'),
+ notice:z.string().min(30).max(350)
+}).passthrough();
