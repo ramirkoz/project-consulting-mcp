@@ -4,6 +4,10 @@ Free, read-only MCP tools for MCP-server discovery and metadata comparison, plus
 
 **Current release: 0.1.3**, published on November 24, 2026 to [npm](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp/v/0.1.3) and [Official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.ramirkoz%2Fproject-consulting). Five read-only tools are available.
 
+## Candidate 0.1.4 (not published)
+
+Adds `index_installation_metadata`, accepting `{"name":"io.github.ramirkoz/project-consulting"}` and calling the live read-only Installation API. Returns dated package and remote declarations, not verified installation or authentication instructions. The current published version remains 0.1.3.
+
 ## Tools in release 0.1.3
 
 | Tool | Operation | Basis |

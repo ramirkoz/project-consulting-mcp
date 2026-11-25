@@ -4,6 +4,10 @@
 
 **Поточний реліз: 0.1.3**, опублікований 24.11.2026 у [npm](https://www.npmjs.com/package/@ramirkoz/project-consulting-mcp/v/0.1.3) та [Official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.ramirkoz%2Fproject-consulting). Доступні п'ять інструментів лише для читання.
 
+## Кандидат 0.1.4 (ще не опубліковано)
+
+Додає `index_installation_metadata` із запитом `{"name":"io.github.ramirkoz/project-consulting"}` до чинного Installation API. Повертає датовані декларації пакетів і remote-підключень, а не перевірені інструкції встановлення чи автентифікації. Чинний опублікований реліз залишається 0.1.3.
+
 ## П'ять інструментів релізу 0.1.3
 
 | Інструмент | Можливість |

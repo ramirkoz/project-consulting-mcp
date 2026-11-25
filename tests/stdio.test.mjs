@@ -6,9 +6,9 @@ import {Client} from '@modelcontextprotocol/client';
 import {StdioClientTransport} from '@modelcontextprotocol/client/stdio';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-test('real SDK v2 stdio starts and lists precisely five read-only tools in a source-only candidate; static guide makes no network calls',
+test('real SDK v2 stdio starts and lists precisely six read-only tools in a source-only candidate; static guide makes no network calls',
  {timeout:20000},async()=>{
-  const client=new Client({name:'project-consulting-test',version:'0.1.3-next.0'});
+  const client=new Client({name:'project-consulting-test',version:'0.1.4-next.0'});
   const transport=new StdioClientTransport({
     command:process.execPath,args:['src/index.mjs'],cwd:root
   });
@@ -16,7 +16,7 @@ test('real SDK v2 stdio starts and lists precisely five read-only tools in a sou
     await client.connect(transport);
     const {tools}=await client.listTools();
     assert.deepEqual(tools.map(x=>x.name).sort(),[
-      'coster_export_guide','index_capabilities','index_compare_mcp_servers','index_search_mcp_servers','index_shortlist_mcp_servers'
+      'coster_export_guide','index_capabilities','index_compare_mcp_servers','index_installation_metadata','index_search_mcp_servers','index_shortlist_mcp_servers'
     ]);
     for(const t of tools){
       assert.equal(t.annotations?.readOnlyHint,true,'all phase A operations read-only');
