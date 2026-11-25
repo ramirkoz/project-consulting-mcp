@@ -158,3 +158,23 @@ export const indexExactCompareOutputSchema=z.object({
  agentTransport:z.literal('typed_publisher_metadata_comparison'),
  notice:z.string().min(30).max(350)
 }).passthrough();
+
+ // P16e: strict projection of the dated installation snapshot, not install instructions.
+const installToken=z.string().regex(/^[A-Za-z0-9@][A-Za-z0-9@._/:+-]*$/).max(160);
+const installUrl=z.string().max(360).refine(x=>{
+ try{const u=new URL(x);return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&!u.search&&!u.hash&&u.hostname.includes('.')&&!/^\d+(\.\d+){3}$/.test(u.hostname)&&!/(?:^|\.)(localhost|local|internal|test|invalid|onion)\.?$/i.test(u.hostname)&&!/%|@/.test(u.pathname)&&!/[{}\\\s]/.test(x);}catch{return false;}
+});
+const requirement=z.strictObject({name:z.string().regex(/^[A-Za-z0-9_-]{1,80}$/),isRequired:z.boolean().nullable(),isSecret:z.boolean().nullable()});
+const connection=z.strictObject({type:z.enum(['stdio','streamable-http','sse']).nullable(),url:installUrl.nullable(),headers:z.array(requirement).max(32).nullable(),urlTemplateDeclared:z.boolean(),authMode:z.null()});
+const count=z.number().int().nonnegative().nullable();
+const installationPackage=z.strictObject({registryType:z.enum(['npm','pypi','oci','nuget','mcpb']).nullable(),identifier:z.union([installToken,installUrl]).nullable(),version:installToken.max(80).nullable(),registryBaseUrl:installUrl.nullable(),runtimeHint:z.enum(['npx','uvx','docker','dnx']).nullable(),transport:connection.nullable(),environmentVariables:z.array(requirement).max(32).nullable(),runtimeArgumentCount:count,packageArgumentCount:count,publisherFileSha256:z.string().regex(/^[a-f0-9]{64}$/).nullable()}).refine(p=>p.identifier===null||(p.registryType==='mcpb'?installUrl.safeParse(p.identifier).success:p.registryType!==null&&installToken.safeParse(p.identifier).success));
+const installationItem=z.strictObject({
+ name:exactMcpName,version:installToken.max(80).nullable(),sourceCode:z.literal('MCP_OFFICIAL_REGISTRY'),
+ sourceUrl:z.string().max(512),retrievedAt:z.iso.datetime(),packages:z.array(installationPackage).max(16).nullable(),remotes:z.array(connection).max(16).nullable(),
+ packageCount:count,remoteCount:count,projectionLimited:z.literal(true),proof:z.literal('publisher_declared_installation_metadata_only'),
+ ...unverifiedFields,securityCertificationVerified:z.literal(false),authMode:z.null(),publisherStatus:z.enum(['active','deprecated','deleted']).nullable()
+}).refine(x=>x.sourceUrl==='https://registry.modelcontextprotocol.io/v0.1/servers?search='+encodeURIComponent(x.name));
+export const indexInstallationOutputSchema=z.strictObject({
+ ok:z.literal(true),name:exactMcpName,free:z.literal(true),paymentRequired:z.literal(false),proof:z.literal('publisher_declared_installation_metadata_only'),
+ installationVerified:z.literal(false),currentUptimeVerified:z.literal(false),taskSuccessVerified:z.literal(false),found:z.boolean(),item:installationItem.nullable()
+}).refine(x=>x.found?(x.item!==null&&x.item.name===x.name):x.item===null);
