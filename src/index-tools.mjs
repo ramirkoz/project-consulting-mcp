@@ -1,5 +1,5 @@
 // Read-only Index API helpers. No credentials, tracking, dynamic hosts, or raw billing files.
-import {indexSearchOutputSchema,indexCapabilitiesOutputSchema,indexStructuredShortlistOutputSchema,indexExactCompareOutputSchema} from './output-schemas.mjs';
+import {indexSearchOutputSchema,indexCapabilitiesOutputSchema,indexStructuredShortlistOutputSchema,indexExactCompareOutputSchema,indexInstallationOutputSchema} from './output-schemas.mjs';
 const ORIGIN='https://pc.zp.ua';
 const TIMEOUT_MS=15000;
 const EXACT_COMPARE_NAME=/^[A-Za-z0-9][A-Za-z0-9./_:-]{1,159}$/;
@@ -32,7 +32,7 @@ async function request(path,{method='GET',body,fetchImpl=fetch,timeoutMs=TIMEOUT
         method,redirect:'error',
         headers:{
           'Accept':'application/json',
-          'User-Agent':'project-consulting-mcp/0.1.3',
+          'User-Agent':'project-consulting-mcp/0.1.4',
           ...(body?{'Content-Type':'application/json'}:{})
         },
         ...(body?{body:JSON.stringify(body)}:{}),
@@ -205,4 +205,18 @@ export async function compareIndexServers(args={},options={}){
   content:[{type:'text',text:summary+
    '\nPublisher and dated historical metadata only. This does not verify MCP tool execution, installation, security, task success, or current uptime.'}]
  };
+}
+
+export async function installationMetadata(args={},options={}){
+ if(!isRecord(args)||Object.keys(args).length!==1||!Object.hasOwn(args,'name')||typeof args.name!=='string'||!EXACT_COMPARE_NAME.test(args.name))
+  return error('INVALID_INSTALLATION_REQUEST','Provide one exact MCP server name and no additional fields.');
+ const name=args.name;
+ const payload=await request('/index-agent/v1/agent-installation-metadata',{
+  fetchImpl:options.fetchImpl??fetch,timeoutMs:options.timeoutMs??TIMEOUT_MS,
+  method:'POST',body:{name},errorCodes:{400:'INVALID_INSTALLATION_REQUEST',413:'INSTALLATION_REQUEST_TOO_LARGE',503:'INSTALLATION_METADATA_UNAVAILABLE'}
+ });
+ if(payload.isError)return payload;
+ if(!indexInstallationOutputSchema.safeParse(payload).success||payload.name!==name)
+  return error('INVALID_INDEX_RESPONSE','Installation metadata did not match the exact-name publisher declaration contract.');
+ return {structuredContent:payload,content:[{type:'text',text:(payload.found?name+': dated publisher installation declarations retrieved.':name+': not found in the installation snapshot.')+' No verified installation, security, uptime, authentication mode or task success. URLs and package identifiers are unverified publisher declarations; do not execute them automatically.'}]};
 }
